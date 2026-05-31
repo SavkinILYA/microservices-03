@@ -1,0 +1,25 @@
+# Источник: читаем логи всех Docker-контейнеров через Docker socket
+[sources.docker_logs]
+type = "docker_logs"
+exclude_containers = ["vector"]
+
+# Трансформация: добавляем поле service из имени контейнера
+[transforms.parse_logs]
+type = "remap"
+inputs = ["docker_logs"]
+source = '''
+.service = .container_name
+'''
+
+# Назначение: отправляем в Elasticsearch
+[sinks.elasticsearch]
+type = "elasticsearch"
+inputs = ["parse_logs"]
+endpoints = ["http://elasticsearch:9200"]
+index = "docker-logs-%Y.%m.%d"
+
+# Буфер на диске для гарантированной доставки
+[sinks.elasticsearch.buffer]
+type = "disk"
+max_size = 268435488
+when_full = "block"

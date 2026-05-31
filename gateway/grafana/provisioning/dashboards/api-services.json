@@ -1,0 +1,64 @@
+{
+  "title": "API Services — Request Distribution",
+  "uid": "api-services-dashboard",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Requests per second by service",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 8 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{job=\"security\"}[1m])",
+          "legendFormat": "security"
+        },
+        {
+          "expr": "rate(http_requests_total{job=\"uploader\"}[1m])",
+          "legendFormat": "uploader"
+        },
+        {
+          "expr": "rate(http_requests_total{job=\"minio\"}[1m])",
+          "legendFormat": "minio"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Total requests by service (last 5m)",
+      "type": "piechart",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "increase(http_requests_total{job=\"security\"}[5m])",
+          "legendFormat": "security"
+        },
+        {
+          "expr": "increase(http_requests_total{job=\"uploader\"}[5m])",
+          "legendFormat": "uploader"
+        },
+        {
+          "expr": "increase(http_requests_total{job=\"minio\"}[5m])",
+          "legendFormat": "minio"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "HTTP response codes by service",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "{{job}} — {{status}}"
+        }
+      ]
+    }
+  ]
+}
